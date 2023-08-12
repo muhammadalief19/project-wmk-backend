@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pesanan_id')->constrained('pesanan')->onDelete('restrict')->onUpdate('restrict');
+            $table->bigInteger('jumlah_item');
+            $table->bigInteger('harga_total');
             $table->timestamps();
         });
     }
