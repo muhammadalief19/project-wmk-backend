@@ -13,8 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pesanans', function (Blueprint $table) {
+        Schema::create('pesanan', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('restrict')->onUpdate('restrict');
+            $table->string('no_pemesanan')->uniqid();
+            $table->date('tgl_pemesanan');
+            $table->string('nama_pemesan');
+            $table->string('alamat_pemesan');
+            $table->enum('status_pemesanan',['failed', 'process', 'delivered']);
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pesanans');
+        Schema::dropIfExists('pesanan');
     }
 };

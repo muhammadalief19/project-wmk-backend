@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('data_admin', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->uniqid();
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict')->onUpdate('restrict');
             $table->string('nik')->unique();
             $table->string('nama_admin');
