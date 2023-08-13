@@ -13,8 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('detail_pesanans', function (Blueprint $table) {
+        Schema::create('detail_pesanan', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_pesanan')->constrained('pesanan')->onDelete('restrict')->onUpdate('restrict');
+            $table->string('kode')->uniqid();
+            $table->bigInteger('total');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detail_pesanans');
+        Schema::dropIfExists('detail_pesanan');
     }
 };
