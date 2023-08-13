@@ -13,8 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('menu', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_mitra')->constrained('mitra')->onDelete('restrict')->onUpdate('restrict');
+            $table->string('kode_menu')->uniqid();
+            $table->string('nama_menu');
+            $table->bigInteger('harga');
+            $table->string('deskripsi');
+            $table->enum('status', ['tersedia', 'kosong']);
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('menu');
     }
 };
