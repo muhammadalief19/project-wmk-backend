@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -40,6 +41,17 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // set UUID
+    protected static function boot() {
+        parent::boot();
+
+        static::creating(function($model) {
+            if($model->getKey() == null) {
+                $model->setAttribute('uuid', Str::uuid()->toString());
+            }
+        });
+    }
 
 
     /* 
