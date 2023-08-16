@@ -39,7 +39,50 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+    // set validation
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email:dns|unique:users',
+            'role' => 'required',
+            'password' => 'required|min:8|confirmed'
+        ],
+        [
+            'name.required' => 'nama wajib diisi',
+            'email.required' => 'email wajib diisi',
+            'email.email' => 'format email tidak sesuai',
+            'email.unique' => 'email tidak tersedia',
+            'role.required' => 'role wajib diisi',
+            'password.required' => 'password wajib diisi',
+            'password.min' => 'password minimal 8 karakter',
+            'password.confirmed' => 'password belum dikonfirmasi'
+        ]
+        );
+
+        // if falidation fails
+        if($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // create user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => Hash::make($request->password)
+        ]);
+
+        //return response JSON user is created
+        if($user) {
+            return response()->json([
+                'success' => true,
+                'user'    => $user,  
+            ], 201);
+        }
+
+        //return JSON process insert failed 
+        return response()->json([
+            'success' => false,
+        ], 409);
     }
 
     /**
