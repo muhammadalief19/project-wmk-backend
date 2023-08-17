@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Mail\EmailVerification;
 
 class UserController extends Controller
 {
@@ -44,7 +46,6 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email:dns|unique:users',
             'role' => 'required',
-            'password' => 'required|min:8|confirmed'
         ],
         [
             'name.required' => 'nama wajib diisi',
@@ -52,9 +53,6 @@ class UserController extends Controller
             'email.email' => 'format email tidak sesuai',
             'email.unique' => 'email tidak tersedia',
             'role.required' => 'role wajib diisi',
-            'password.required' => 'password wajib diisi',
-            'password.min' => 'password minimal 8 karakter',
-            'password.confirmed' => 'password belum dikonfirmasi'
         ]
         );
 
@@ -63,16 +61,26 @@ class UserController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        $code = uniqid();
+
         // create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($code)
         ]);
+
+        $details = [
+            'title' => 'Mail from DavezDelivery.com',
+            'body' => 'Gunakan password dibawah ini untuk login ke aplikasi DavezDelivery',
+            'name' => $user->name,
+            'code' => $code
+        ];
 
         //return response JSON user is created
         if($user) {
+            Mail::to($user->email)->send(new EmailVerification($details));
             return response()->json([
                 'success' => true,
                 'user'    => $user,  
@@ -222,5 +230,20 @@ class UserController extends Controller
                 'message' => 'Logout Berhasil!',  
             ]);
         }
+    }
+
+    // verify email
+    public function verify($id, Request $request) {
+        if (!$request->hasValidSignature()) {
+            return response()->json(["msg" => "Invalid/Expired url provided."], 401);
+        }
+    
+        $user = User::findOrFail($id);
+    
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+    
+        return redirect()->to('/');
     }
 }

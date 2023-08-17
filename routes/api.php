@@ -32,4 +32,10 @@ Route::controller(UserController::class)->group(function() {
 
     // routing logout
     Route::post('/logout', 'logout')->name('logout');
+
+    // routing email verify
+    Route::get('/email/verify/{id}', 'verify')->name('verification.verify');
+
+    // routing resend email
+    Route::get('/email/resend', 'resend')->name('verification.resend');
 });
