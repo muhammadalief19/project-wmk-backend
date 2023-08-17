@@ -22,10 +22,10 @@
             </div>
       
             <div class="content__body py-8 border-b">
-              <p>
+              <p class="text-sm md:text-base">
                 Hey, {{$details["name"]}}<br><br> {{ $details["body"]}}
               </p>
-              <button class="text-white text-sm tracking-wide bg-red rounded-full w-full my-8 p-4 "> {{$details["code"]}} </button>
+              <div class="text-white text-center text-sm tracking-wide bg-red rounded-full w-full my-8 p-4 "> {{$details["code"]}} </div>
             </div>
       
             <div class="content__footer mt-8 text-center text-grey-darker">
