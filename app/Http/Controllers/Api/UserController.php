@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Mail\EmailVerification;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -83,13 +84,15 @@ class UserController extends Controller
             Mail::to($user->email)->send(new EmailVerification($details));
             return response()->json([
                 'success' => true,
-                'user'    => $user,  
+                'user'    => $user,
+                'message' => 'User berhasil ditambahkan'  
             ], 201);
         }
 
         //return JSON process insert failed 
         return response()->json([
             'success' => false,
+            'message' => 'User gagal ditambahkan'
         ], 409);
     }
 
@@ -233,17 +236,39 @@ class UserController extends Controller
     }
 
     // verify email
-    public function verify($id, Request $request) {
-        if (!$request->hasValidSignature()) {
-            return response()->json(["msg" => "Invalid/Expired url provided."], 401);
+    public function verify(Request $request, $uuid) {
+        date_default_timezone_set('Asia/Jakarta');
+        // // set validation
+        // $validator = Validator::make($request->all(), [
+        //     'email_verified_at'     => 'required',
+        // ],
+        // [
+        //     'email_verified_at.required' => "kolom wajib diisi"
+        // ]);
+
+        // //if validation fails
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
+
+        $user = DB::table('users')->where('uuid', $uuid);
+
+        $verifyUser = DB::table('users')->where('uuid', $uuid)->update([
+            'email_verified_at' => date('Y-m-d H:i:s')
+        ]);
+
+        if($verifyUser) {
+            return response()->json([
+                "success" => true,
+                "message" => "Akun telah terverifikasi"
+            ], 200);
         }
-    
-        $user = User::findOrFail($id);
-    
-        if (!$user->hasVerifiedEmail()) {
-            $user->markEmailAsVerified();
-        }
-    
-        return redirect()->to('/');
+
+        return response()->json([
+            "success" => false,
+            "message" => "Akun gagal terverifikasi",
+            "user" => $user,
+            "uuid" => $uuid
+        ], 400);
     }
 }
