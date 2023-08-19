@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -72,5 +74,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    // get the data admin for the user
+    public function data_admin() : HasOne 
+    {
+        return $this->hasOne(DataAdmin::class);
+    }
+
+    // get the data admin for the user
+    public function data_pegawai() : HasOne
+    {
+        return $this->hasOne(DataAdmin::class);
     }
 }
