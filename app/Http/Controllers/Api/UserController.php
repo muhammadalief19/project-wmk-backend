@@ -255,7 +255,8 @@ class UserController extends Controller
         $user = DB::table('users')->where('uuid', $uuid);
 
         $verifyUser = DB::table('users')->where('uuid', $uuid)->update([
-            'email_verified_at' => date('Y-m-d H:i:s')
+            'email_verified_at' => date('Y-m-d H:i:s'),
+            'verify' => 'verified'
         ]);
 
         if($verifyUser) {
