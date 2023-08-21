@@ -173,6 +173,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'verify' => 'pending',
             'password' => Hash::make($request->password)
         ]);
 
