@@ -273,4 +273,10 @@ class UserController extends Controller
             "uuid" => $uuid
         ], 400);
     }
+
+    public function authUser(Request $request) {
+        $authUser = $request->user();
+
+        return $authUser;
+    }
 }
